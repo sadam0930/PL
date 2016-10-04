@@ -15,7 +15,7 @@ procedure AQMain is
 
 	function MyF(x : Float) return Float is
 	begin
-		return Sin(x);
+		return Sin(x**2);
 	end MyF;
 
 	package AQuad is new AdaptiveQuad(MyF);
@@ -23,36 +23,78 @@ procedure AQMain is
 	task ReadPairs;
 	task ComputeArea is 
 		entry getInterval(A, B : Float);
-		entry done();
+		entry done;
 	end ComputeArea;
+	task PrintResult is
+		entry getResult(A, B, result : Float);
+		entry done;
+	end PrintResult;
 
 	task body ReadPairs is
 		A, B : Float;
-		for i in 1...5 loop
-			-- toDo: read values A and B using Get procedure
-			-- toDo: feed A and B to ComputeArea (call entry)
+	begin
+		for i in 1 .. 5 loop
+			get(A);
+			get(B);
+
 			ComputeArea.getInterval(A, B);
 		end loop;
-		ComputeArea.done();
+		-- put_line("Read DONE");
+		ComputeArea.done;
 	end ReadPairs;
 
 	task body ComputeArea is
-		notDone : boolean := true; -- ada booleans?
+		notDone : Boolean := true;
+		J, K, result : Float;
+	begin
 		while notDone loop
 			select 
 				accept getInterval(A, B : Float) do
-					--toDo: save values into local variables
+					J := A;
+					K := B;
 				end getInterval;
+				
+				--toDo: maybe move this block out of loop
+				result := AQuad.AQuad(J, K, Eps);
+				PrintResult.getResult(J, K, result);
+				--
 			or
-				accept done() do
+				accept done do
 					notDone := false;
 				end done;
-
-			--toDo: call AQuad
-			--toDo: when Aquad return, pass result to PrintResult
+			end select;
 		end loop;
+		-- put_line("Compute DONE");
+		PrintResult.done;
 	end ComputeArea;
 
+	task body PrintResult is
+		notDone : Boolean := true;
+		J, K, R : Float;
+	begin
+		while notDone loop
+			select 
+				accept getResult(A, B, result : Float) do
+					J := A;
+					K := B;
+					R := result;
+				end getResult;
+
+				put("The area under sin(x^2) for x = ");
+				put(J);
+				put(" to ");
+				put(K);
+				put(" is ");
+				put(R); new_line;
+			or
+				accept done do
+					notDone := false;
+				end done;
+			end select;
+		end loop;
+		-- put_line("Print DONE");
+	end PrintResult;
+
 begin
-	put_line("hello");
+	null;
 end AQMain;
