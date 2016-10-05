@@ -53,11 +53,9 @@ procedure AQMain is
 					J := A;
 					K := B;
 				end getInterval;
-				
-				--toDo: maybe move this block out of loop
+
 				result := AQuad.AQuad(J, K, Eps);
 				PrintResult.getResult(J, K, result);
-				--
 			or
 				accept done do
 					notDone := false;
