@@ -2,11 +2,4 @@
 *.ali
 ada_assignment/aqmain
 
-*.ss~
-*.ss#*
-.#*.ss
-
-*.scm~
-*.scm#*
-.#*.scm
 *.bak
