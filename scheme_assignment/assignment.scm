@@ -74,3 +74,22 @@
  	   ((list? exp) ((translate (caddr exp)) (postfix-eval (car exp))  (postfix-eval (cadr exp))))
  )
 )
+
+
+;;; Base Case: L is empty, return the set containing the empty set, i.e. ’(()).
+;;; Assumption: (powerset M) returns the powerset of M, for any set M smaller 
+;;; than L (including (cdr L)).
+;;; Step: Return a list whose elements combine the powerset of M and the list 
+;;; which inserts the first element of L (car L) into the powerset of M.
+(define (powerset L)
+ (cond ((null? L) (list L))
+ 	   (else (append 
+ 	   			(powerset (cdr L)) 
+ 	   			(map 
+ 	   				(lambda (x) (cons (car L) x)) 
+ 	   				(powerset (cdr L))
+ 	   			)
+ 	   	     )
+ 	   )
+ )
+)
