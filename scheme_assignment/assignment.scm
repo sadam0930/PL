@@ -36,9 +36,60 @@
  )
 )
 
-;;; Base Case:
-;;; Assumption:
-;;; Step:
+;;; Base Case:  L is empty, return a list with the element to be inserted
+;;; Assumption: (sort M) returns a sorted list in ascending order for the elements of M, 
+;;; for any list M smaller than L.
+;;; Step: Insert of the first element of L (car L) into the sorted list M (cdr L)
+;;; Step: If element to be inserted (x) is less than the first element of L (car L), return
+;;; a list starting with x and the rest of the elements of L. Otherwise return a list
+;;; starting with the first element of L (car L) and the inserted x in the rest of L (cdr L)
 (define (sort L)
- 
+ (letrec
+ 	((insert (
+ 			lambda (x L) 
+ 				(cond ((null? L) (list x))
+ 					  ((< x (car L)) (cons x L))
+ 					  (else (cons (car L) (insert x (cdr L))))
+ 				)
+	  )
+ 	))
+ 	(cond ((null? L) L)
+ 		  (else (insert (car L) (sort (cdr L))))
+ 	)
+ )
+)
+
+
+(define (translate op)
+ (cond ((eq? op '+) +)
+ 	   ((eq? op '-) -)
+ 	   ((eq? op '*) *)
+ 	   ((eq? op '/) /)
+ )
+)
+
+(define (postfix-eval exp)
+ (cond ((null? exp) exp)
+ 	   ((number? exp) exp)
+ 	   ((list? exp) ((translate (caddr exp)) (postfix-eval (car exp))  (postfix-eval (cadr exp))))
+ )
+)
+
+
+;;; Base Case: L is empty, return the set containing the empty set, i.e. ’(()).
+;;; Assumption: (powerset M) returns the powerset of M, for any set M smaller 
+;;; than L (including (cdr L)).
+;;; Step: Return a list whose elements combine the powerset of M and the list 
+;;; which inserts the first element of L (car L) into the powerset of M.
+(define (powerset L)
+ (cond ((null? L) (list L))
+ 	   (else (append 
+ 	   			(powerset (cdr L)) 
+ 	   			(map 
+ 	   				(lambda (x) (cons (car L) x)) 
+ 	   				(powerset (cdr L))
+ 	   			)
+ 	   	     )
+ 	   )
+ )
 )
