@@ -3,3 +3,5 @@
 ada_assignment/aqmain
 
 *.bak
+
+*.class
